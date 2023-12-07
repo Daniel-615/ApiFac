@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    command: ["sh", "./start.sh"]
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - postgres_db
+
+  postgres_db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${PG_NAME}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - HOSTNAME=${PG_HOST}
+
+  frontend:
+    build:
+      context: ../React
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
